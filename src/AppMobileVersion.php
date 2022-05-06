@@ -66,7 +66,7 @@ class AppMobileVersion {
             $uri = "http://itunes.apple.com/lookup";
 
             $query = [
-                'bundleId' => $this->bundleId,
+                'bundleId' => $this->options["bundleId"],
                 'country' => $country
             ];
 
@@ -128,7 +128,7 @@ class AppMobileVersion {
             $uri = "https://play.google.com/store/apps/details";
 
             $query = [
-                'id' => $this->bundleId,
+                'id' => $this->options["bundleId"],
             ];
 
             $options = [
