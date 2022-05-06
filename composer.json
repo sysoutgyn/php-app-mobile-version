@@ -1,0 +1,24 @@
+{
+    "name": "sysout/php-app-mobile-version",
+    "description": "read the version of the apps that is in the app store and google play",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Sysout\\PhpAppMobileVersion\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "João Victor",
+            "email": "joaovictor@sysout.com.br"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": ">=6.3"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+
+}
