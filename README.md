@@ -30,7 +30,7 @@ $data =[
     $iosVersion = 'ios: '.$api->getIos()
 ];
 
-return $data;
+echo $data;
 ```
 
 
