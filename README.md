@@ -22,8 +22,6 @@ $options = [
 ];
 
 $api= new MobileVersion;
-$android = $api->getAndroid( $options );
-$ios = $api->getIos();
 
 $data =[
     $androidVersion = 'android: '.$api->getAndroid(),
