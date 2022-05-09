@@ -3,7 +3,7 @@
 Installation
 ------------
 
-The recommended way to install AppVersion is through Composer.
+The recommended way to install AppMobileVersion is through Composer.
 
 ```bash
 composer require sysout/php-app-mobile-version
@@ -21,7 +21,7 @@ $options = [
     'cachePeriod' => 3600
 ];
 
-$api= new MobileVersion;
+$api= new AppMobileVersion($options);
 
 $data =[
     $androidVersion = 'android: '.$api->getAndroid(),
