@@ -21,7 +21,6 @@ class AppMobileVersion {
     private $ITUNES_URL = "http://itunes.apple.com/lookup";
     private $GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details";
 
-
     /**
      * Construtor da classe
      *
