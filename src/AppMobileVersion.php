@@ -3,6 +3,8 @@
 namespace Sysout\PhpAppMobileVersion;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
 use Sysout\PhpAppMobileVersion\Exceptions\AppMobileVersionException;
 
 /**
@@ -16,6 +18,9 @@ class AppMobileVersion {
 
     private array $options;
     private $client;
+    private $ITUNES_URL = "http://itunes.apple.com/lookup";
+    private $GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details";
+
 
     /**
      * Construtor da classe
@@ -47,10 +52,9 @@ class AppMobileVersion {
      *
      * @param string $packageName
      * @param string $country
-     * @return $version
+     * @return string versão
      */
-    public function getIos($country = 'br')
-    {
+    public function getIos($country = 'br') {
 
         try {
 
@@ -63,7 +67,7 @@ class AppMobileVersion {
                 }
             }
 
-            $uri = "http://itunes.apple.com/lookup";
+            $uri = $this->ITUNES_URL;
 
             $query = [
                 'bundleId' => $this->options["bundleId"],
@@ -94,15 +98,24 @@ class AppMobileVersion {
                     return $version;
                 } else {
 
-                    throw new \Exception('Não foi possível retornar o um valor válido');
+                    throw new AppMobileVersionException('Não foi possível retornar o um valor válido');
                 }
             } else {
 
-                throw new \Exception('Não foi possível identificar a versão do app dentro do retorno');
+                throw new AppMobileVersionException('Não foi possível identificar a versão do app dentro do retorno');
             }
+
+        } catch (BadResponseException $be) {
+
+            throw new AppMobileVersionException('Falha ao realizar a requisição no Itunes');
+
+        } catch (ConnectException $ce) {
+
+            throw new AppMobileVersionException('Falha ao conectar na Itunes');
+    
         } catch (\Exception $e) {
 
-            return 'Não foi possível se conectar ao servidor / verifique sua conexão ';
+            throw $e;
         }
     }
 
@@ -110,7 +123,7 @@ class AppMobileVersion {
      * Retornar versão de um app android
      *
      * @param string $bundleId
-     * @return $result
+     * @return string versão
      */
     public function getAndroid() {
 
@@ -125,7 +138,7 @@ class AppMobileVersion {
                 }
             }
 
-            $uri = "https://play.google.com/store/apps/details";
+            $uri = $this->GOOGLE_PLAY_URL;
 
             $query = [
                 'id' => $this->options["bundleId"],
@@ -143,21 +156,31 @@ class AppMobileVersion {
 
             preg_match_all('/<span class="htlgb"><div class="IQ1z0d"><span class="htlgb">(.*?)<\/span><\/div><\/span>/s', $html, $output);
 
-            $result = $output[1][3];
+            $result = $output[1][3] ?? null;
 
             if ($result) {
 
+                // Salvar no cache
+                $this->saveCache('android', $result);
+
                 return $result;
+
             } else {
 
-                throw new \Exception('Não foi possível obter um resultado válido');
+                throw new AppMobileVersionException('Não foi possível obter um resultado válido');
             }
+
+        } catch (BadResponseException $be) {
+
+            throw new AppMobileVersionException('Falha ao realizar a requisição na Play Store');
+
+        } catch (ConnectException $ce) {
+
+            throw new AppMobileVersionException('Falha ao conectar na Play Store');
+    
         } catch (\Exception $e) {
 
-            // Devolve erro de Curl
-            // $message = $e->getMessage();
-
-            return 'Não foi possível se conectar ao servidor';
+            throw $e;
         }
     }
 
@@ -226,7 +249,6 @@ class AppMobileVersion {
             }
 
             return null;
-
         }
 
     }
@@ -239,7 +261,7 @@ class AppMobileVersion {
      * @return void
      */
     private function saveCache(string $platform, string $version) {
-            
+                        
         if ($this->isUsingCache()) {
 
             $id = $this->options["bundleId"];
@@ -262,10 +284,9 @@ class AppMobileVersion {
             ];
     
             $cacheFileDataEncoded = json_encode($cacheFileData);
-    
+
             // Sobrescrever (ou criar) arquivo
             file_put_contents($this->options["cacheFilePath"], $cacheFileDataEncoded);
-
         }
     }
 }
