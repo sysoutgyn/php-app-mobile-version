@@ -153,9 +153,9 @@ class AppMobileVersion {
 
             $html = $body->getContents();
 
-            preg_match_all('/<span class="htlgb"><div class="IQ1z0d"><span class="htlgb">(.*?)<\/span><\/div><\/span>/s', $html, $output);
+            preg_match('/\[\[\[\"\d+\.\d+\.\d+/', $html, $output);
 
-            $result = $output[1][3] ?? null;
+            $result = substr(current($output), 4) ?? null;
 
             if ($result) {
 
